@@ -25,6 +25,9 @@ def get_venue_list(input_path):
 
 	return venues_dict
 
+# returns a dictionary with category-vid_name array keypair values
+# eg. {..., 29: [...], 30: ['1000194297829666816', ...]}
+
 def get_video_category(input_path, textfile):
 	video_category = {}
 	venues_dict = get_venue_list(input_path)
@@ -35,12 +38,12 @@ def get_video_category(input_path, textfile):
 	for string in line:
 		divide = string.split("\t")
 		divide[1] = divide[1][:-2]
-		if divide[1] in video_category:
-			video_category[divide[1]].append(divide[0])
+		if int(divide[1]) in video_category:
+			video_category[int(divide[1])].append(divide[0])
 		else:
 			array = []
 			array.append(divide[0])
-			video_category[divide[1]] = array
+			video_category[int(divide[1])] = array
 
 	return video_category
 

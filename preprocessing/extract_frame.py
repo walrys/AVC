@@ -1,4 +1,3 @@
-__author__ = "xiangwang1223@gmail.com"
 # The simple implentation of obtaining the key frames of an original video clip.
 
 # Input: an original video file.
@@ -9,7 +8,7 @@ __author__ = "xiangwang1223@gmail.com"
 
 import cv2, os, sys
 import numpy as np
-import utility.util as util
+import preprocess_utility.pp_util as util
 
 
 # The implementation of fetching the key frames.

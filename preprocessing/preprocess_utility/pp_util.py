@@ -49,12 +49,14 @@ def get_jpg_dictionary_path(input_path):
 		full_path = input_path + "/" + path
 		if (os.path.basename(full_path) != ".DS_Store"):
 			jpg_paths = os.listdir(full_path)
-			for i in len(jpg_paths):
-				jpg_paths[i] = full_path + "/" + jpg_paths[i]
+			#print jpg_paths
+			if (len(jpg_paths) > 0):
+				for i in xrange(len(jpg_paths)):
+					jpg_paths[i] = full_path + "/" + jpg_paths[i]
 			jpg_dict[os.path.basename(path)] = jpg_paths
 
 	return jpg_dict
 
 #print get_venue_list("/Users/Brandon/Dropbox/NUS/Y3S1/CS2108/Lab/Assignment_2/CS2108-Vine-Dataset")
 #print get_mp4_paths(database_path)
-#print get_jpg_dictionary_path("/Users/Brandon/Dropbox/NUS/Y3S1/CS2108/Lab/Assignment_2/CS2108-Vine-Dataset/vine/training/mp4_frames")
+#print get_jpg_dictionary_path("/Users/Brandon/Dropbox/NUS/Y3S1/CS2108/Lab/Assignment_2/CS2108-Vine-Dataset/mp4_frames")
