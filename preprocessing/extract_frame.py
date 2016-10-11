@@ -101,6 +101,9 @@ def batchFrameExtract(input_store_path, database_path):
         vidcap.release()
         folder_path = ""
 
+# arg[1] = storage path
+# arg[2] = database path
+
 if __name__ == '__main__':
    
     if (len(sys.argv) != 3):

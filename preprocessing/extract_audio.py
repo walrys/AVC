@@ -5,16 +5,18 @@ import moviepy.editor as mp
 import utility.util as util
 
 def getAudioClip(video_reading_path, audio_storing_path):
-	if (os.path.basename(video_reading_path) == "1001032302756761600.mp4"
+	"""if (os.path.basename(video_reading_path) == "1001032302756761600.mp4"
 		or os.path.basename(video_reading_path) == "1005958035061297152.mp4"):
 		size = 150000
 	elif (os.path.basename(video_reading_path) == "1001088152326610944.mp4"):
 		size = 5000
 	else:
-		size = 200000
-	
-	clip = mp.VideoFileClip(video_reading_path, audio_buffersize=size)
-	clip.audio.write_audiofile(audio_storing_path)
+		size = 200000"""
+	try:
+		clip = mp.VideoFileClip(video_reading_path)
+		clip.audio.write_audiofile(audio_storing_path)
+	except IOError:
+		print "An IOError has occured"
 
 # input storage path
 def batchAudioExtract(input_store_path, database_path):
@@ -24,6 +26,9 @@ def batchAudioExtract(input_store_path, database_path):
 		sound_file = os.path.basename(path)
 		sound_file = input_store_path + "/" + sound_file[:len(sound_file) - 3] + "wav"
 		getAudioClip(path, sound_file)
+
+# arg[1] = storage path
+# arg[2] = database path
 
 if __name__ == '__main__':
 	if (len(sys.argv) != 3):
