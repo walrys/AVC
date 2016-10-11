@@ -7,8 +7,9 @@ __author__ = "xiangwang1223@gmail.com"
 #                     2. you need to select a suitable and reasonable way to
 #                        deal with the multiple output (frames, images) to represent the video.
 
-import cv2
+import cv2, os, sys
 import numpy as np
+import utility.util as util
 
 
 # The implementation of fetching the key frames.
@@ -41,6 +42,7 @@ def getKeyFrames(vidcap, store_frame_path):
         if sumDiff[i] > m + std*3:
             candidates.append(i+1)
             candidates_value.append(sumDiff[i])
+            
 
     if len(candidates) > 20:
         top10list = sorted(range(len(candidates_value)), key=lambda i: candidates_value[i])[-9:]
@@ -62,20 +64,58 @@ def getKeyFrames(vidcap, store_frame_path):
     for frame in keyframes:
         vidcap.set(cv2.cv.CV_CAP_PROP_POS_FRAMES, frame)
         success, image = vidcap.read()
-        cv2.imwrite(store_frame_path+"frame%d.jpg" % count, image)
-        count += 1
+        jpg_name = store_frame_path+"frame"+str(count)+".jpg"   
+        cv2.imwrite(jpg_name, image)
+        
+        if (os.path.getsize(jpg_name) > 0):
+            count += 1
+        else:
+            # delete file
+            os.remove(jpg_name)
+        
+        print "keyframe: " + str(frame)
+
     return keyframes
 
+def batchFrameExtract(input_store_path, database_path):
+    mp4_paths = util.get_mp4_paths(database_path)
+
+    for path in mp4_paths:
+        # 1. Set the access path to the original video clip.
+        video_file = path
+
+        # 2. Open the video clip.
+        vidcap = cv2.VideoCapture(video_file)
+
+        # 3. Get and store the resulting frames via the specific path.
+        video_name = os.path.basename(video_file)
+        folder_path = input_store_path + "/" + video_name[:-4]
+        if (not os.path.exists(folder_path)):
+            os.makedirs(folder_path)
+
+        store_frame_path = folder_path+"/"+os.path.basename(video_file)[:-4]+"-"
+
+        keyframes = getKeyFrames(vidcap=vidcap, store_frame_path=store_frame_path)
+        
+        # 4. Close the video clip.
+        vidcap.release()
+        folder_path = ""
 
 if __name__ == '__main__':
-    # 1. Set the access path to the original video clip.
-    video_file = "../data/video/4.mp4"
+   
+    if (len(sys.argv) != 3):
+        print "Please input storage path directory for wav files or the video source path"
+    elif (not os.path.exists(sys.argv[1]) or not os.path.exists(sys.argv[2])):
+        print "Please input a valid storage path directory for wav files and/or video source path"
+    else:
+        input_store_path = sys.argv[1]
+        database_path = sys.argv[2]
 
-    # 2. Open the video clip.
-    vidcap = cv2.VideoCapture(video_file)
+        #video_file = "/Users/Brandon/Dropbox/NUS/Y3S1/CS2108/Lab/Assignment_2/CS2108-Vine-Dataset/vine/training/1000046931730481152.mp4"
+        #vidcap = cv2.VideoCapture(video_file)
+        #store_frame_path = input_store_path+video_file[:-4]+"-"
+        #keyframes = getKeyFrames(vidcap=vidcap, store_frame_path=store_frame_path)
 
-    # 3. Get and store the resulting frames via the specific path.
-    keyframes = getKeyFrames(vidcap=vidcap, store_frame_path="../data/frame/4-")
-
-    # 4. Close the video clip.
-    vidcap.release()
+        batchFrameExtract(input_store_path, database_path)
+        
+       

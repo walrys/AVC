@@ -26,7 +26,7 @@ def get_venue_list(input_path):
 	return venues_dict
 
 # returns a list of full individual mp4 path 
-# from the database
+# from the database by taking in an input_path
 # eg. '...something.../CS2108-Vine-Dataset/vine/training/1023439919177490432.mp4'
 
 def get_mp4_paths(input_path):
@@ -38,6 +38,22 @@ def get_mp4_paths(input_path):
 			mp4_paths[i] = input_path + "/" + mp4_paths[i]
 
 	return mp4_paths
+
+# returns a dictionary of full jpg path with name and array of frames as key-value pair
+# eg. {'1000046931730481152': [...something.../1000046931730481152-frame0.jpg, ...], ...}
+
+def get_jpg(input_path):
+	frame_folder_paths = os.listdir(input_path)
+	jpg_dict = {}
+	for path in frame_folder_paths:
+		full_path = input_path + "/" + path
+		if (os.path.basename(full_path) != ".DS_Store"):
+			jpg_paths = os.listdir(full_path)
+			for i in len(jpg_paths):
+				jpg_paths[i] = full_path + "/" + jpg_paths[i]
+			jpg_dict[os.path.basename(path)] = jpg_paths
+
+	return jpg_dict
 
 #print get_venue_list("/Users/Brandon/Dropbox/NUS/Y3S1/CS2108/Lab/Assignment_2/CS2108-Vine-Dataset")
 #print get_mp4_paths(database_path)
