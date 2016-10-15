@@ -6,8 +6,8 @@ import csv
 """ 
 
 # modify this to the database path to extract from database videos
-database_path = "/Users/Brandon/Dropbox/NUS/Y3S1/CS2108/Lab/Assignment_2/CS2108-Vine-Dataset/vine/training"
-query_path = "/Users/Brandon/Dropbox/NUS/Y3S1/CS2108/Lab/Assignment_2/CS2108-Vine-Dataset/vine/validation"
+database_path = "/Users/Brandon/Documents/CS2108-Vine-Dataset/vine/training"
+query_path = "/Users/Brandon/Documents/CS2108-Vine-Dataset/vine/validation"
 
 # returns a dictionary of index-venue key pair 
 # eg. {1: 'City', 2: 'Theme Park' ...}
@@ -79,7 +79,7 @@ def get_jpg_dictionary_path(input_path):
 
 	return jpg_dict
 
-#print get_venue_list("/Users/Brandon/Dropbox/NUS/Y3S1/CS2108/Lab/Assignment_2/CS2108-Vine-Dataset")
+#print get_venue_list("/Users/Brandon/Documents/CS2108-Vine-Dataset")
 #print get_mp4_paths(database_path)
-#print get_jpg_dictionary_path("/Users/Brandon/Dropbox/NUS/Y3S1/CS2108/Lab/Assignment_2/CS2108-Vine-Dataset/mp4_frames")
-#print get_video_category("/Users/Brandon/Dropbox/NUS/Y3S1/CS2108/Lab/Assignment_2/CS2108-Vine-Dataset", "vine-venue-training.txt")
+#print get_jpg_dictionary_path("/Users/Brandon/Documents/CS2108-Vine-Dataset/mp4_frames")
+#print get_video_category("/Users/Brandon/Documents/CS2108-Vine-Dataset", "vine-venue-training.txt")

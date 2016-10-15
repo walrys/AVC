@@ -76,6 +76,18 @@ def getKeyFrames(vidcap, store_frame_path):
 
     return keyframes
 
+# single frame extraction
+def frameExtract(input_store_path, search_path):
+    video_file = search_path
+    vidcap = cv2.VideoCapture(video_file)
+    video_name = os.path.basename(video_file)
+    store_frame_path = input_store_path + "/" + video_name[:-4]+"-" 
+    keyframes = getKeyFrames(vidcap=vidcap, store_frame_path=store_frame_path)
+    vidcap.release()
+
+    return keyframes
+
+# batch frame extraction
 def batchFrameExtract(input_store_path, database_path):
     mp4_paths = util.get_mp4_paths(database_path)
 
@@ -111,13 +123,13 @@ if __name__ == '__main__':
         print "Please input a valid storage path directory for wav files and/or video source path"
     else:
         input_store_path = sys.argv[1]
-        database_path = sys.argv[2]
+        path = sys.argv[2]
 
-        #video_file = "/Users/Brandon/Dropbox/NUS/Y3S1/CS2108/Lab/Assignment_2/CS2108-Vine-Dataset/vine/training/1000046931730481152.mp4"
+        #video_file = "/Users/Brandon/Documents/CS2108-Vine-Dataset/vine/training/1000046931730481152.mp4"
         #vidcap = cv2.VideoCapture(video_file)
         #store_frame_path = input_store_path+video_file[:-4]+"-"
         #keyframes = getKeyFrames(vidcap=vidcap, store_frame_path=store_frame_path)
 
-        batchFrameExtract(input_store_path, database_path)
+        batchFrameExtract(input_store_path, path)
         
        

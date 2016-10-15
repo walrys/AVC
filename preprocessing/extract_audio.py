@@ -38,7 +38,7 @@ if __name__ == '__main__':
 	else:
 		input_store_path = sys.argv[1]
 		database_path = sys.argv[2]
-		#mp4_path = "/Users/Brandon/Dropbox/NUS/Y3S1/CS2108/Lab/Assignment_2/CS2108-Vine-Dataset/vine/training/1005958035061297152.mp4"
+		#mp4_path = "/Users/Brandon/Documents/CS2108-Vine-Dataset/vine/training/1005958035061297152.mp4"
 		#sound_file = input_store_path + "/" + os.path.basename(mp4_path)[:-3] + "wav"
 		#getAudioClip(mp4_path, sound_file)
 		batchAudioExtract(input_store_path, database_path)
