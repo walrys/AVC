@@ -16,6 +16,7 @@ import librosa
 import numpy as np
 import os
 import sys
+import multiprocessing
 
 
 # Print iterations progress
@@ -68,19 +69,78 @@ def getAcousticFeatures(audio_reading_path):
 
     return feature_mfcc, feature_spect, feature_zerocrossing, feature_energy
 
-def extractAllFeatures(audio_directory):
+    
+def extractAllCSV(directory='./'):
+    files = []
+    for file in os.listdir(directory):
+        if file.endswith(".wav"):
+            files.append(directory+'/'+file)
+            
+    extractMultipleCSV(files)
+    
+def extractAll(directory,numProcesses):
+    files = []
+    for file in os.listdir(directory):
+        if file.endswith(".wav"):
+            files.append(directory+'/'+file)
+            
+    print 'extracting...'
+    
+    jobs = []
+    n = numProcesses
+    x = len(files)//n
+    for i in range(n):
+        if(i+1 == n):
+            extractMultiple(files[i*x:],False)
+            for p in jobs:
+                p.join()
+            print "audio features extracted!"
+            for p in jobs:
+                p.terminate()
+        else:
+            p = multiprocessing.Process(target=extractMultiple, args=(files[i*x:i*x+x],True,))
+            jobs.append(p)
+            p.start()
+            
+# extract files in list 'paths' (eg. paths[0] = '1000046931730481152.wav')
+def extractMultiple(paths,isProcess):
+    numFiles = len(paths)
+    for i in range(numFiles):
+        audio_reading_path = paths[i]
+        feature_mfcc, feature_spect, feature_zerocrossing, feature_energy = getAcousticFeatures(audio_reading_path=audio_reading_path)
+        acoustic_storing_path = audio_reading_path[:-4]
+        np.save(acoustic_storing_path+"_mfcc", feature_mfcc)
+        np.save(acoustic_storing_path+"_spect", feature_spect)
+        np.save(acoustic_storing_path+"_zero", feature_zerocrossing)
+        np.save(acoustic_storing_path+"_energy", feature_energy)
+        if not isProcess:
+            printProgress(i, numFiles, prefix = 'Extracting:', suffix = '', decimals = 2, barLength = 50)
+
+def extractMultipleCSV(path):
+    numFiles = len(path)
+    for i in range(numFiles):
+        audio_reading_path = path[i]
+        feature_mfcc, feature_spect, feature_zerocrossing, feature_energy = getAcousticFeatures(audio_reading_path=audio_reading_path)
+        acoustic_storing_path = audio_reading_path[:-4]
+        np.savetxt(acoustic_storing_path+"_mfcc.csv", feature_mfcc, delimiter=",")
+        np.savetxt(acoustic_storing_path+"_spect.csv", feature_spect, delimiter=",")
+        np.savetxt(acoustic_storing_path+"_zero.csv", feature_zerocrossing, delimiter=",")
+        np.savetxt(acoustic_storing_path+"_energy.csv", feature_energy, delimiter=",")
+        printProgress(i, numFiles, prefix = 'Extracting CSVs:', suffix = 'Complete', decimals = 2, barLength = 50)
+        
+def extractAllFeaturesInDirectorySlow(audio_directory):
     counter = 0.0
     foldersize = len([name for name in os.listdir(audio_directory)])
     for file in os.listdir(audio_directory):
         if file.endswith(".wav"):
             # 1. Set the access path to the audio clip.
-            audio_reading_path = file
+            audio_reading_path = audio_directory+'./'+file
             
             # 2. Fetch the corresponding features of the audio, consisting of mfcc, melspect, zero-crossing rate, and energy.
             feature_mfcc, feature_spect, feature_zerocrossing, feature_energy = getAcousticFeatures(audio_reading_path=audio_reading_path)
             
             # 3. Select the type of feature of interest, and set the storing path.
-            acoustic_storing_path = file[:-4]
+            acoustic_storing_path = audio_directory+'/extractedFeatures/'+file[:-4]
 
             # 4. Store the extracted acoustic feature(s) to .csv form.
             np.savetxt(acoustic_storing_path+"_mfcc.csv", feature_mfcc, delimiter=",")
@@ -90,7 +150,7 @@ def extractAllFeatures(audio_directory):
         
         counter+=1        
         percentage = counter/foldersize * 100
-        printProgress(counter, foldersize, prefix = 'Progess:', suffix = 'Complete', decimals = 1, barLength = 50)
+        printProgress(counter, foldersize, prefix = 'Extracting CSVs:', suffix = 'Complete', decimals = 2, barLength = 50)
         
     print "done"
     
