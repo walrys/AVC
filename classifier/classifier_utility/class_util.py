@@ -76,6 +76,67 @@ def get_jpg_dictionary_path(input_path):
 
 	return jpg_dict
 
+def extractFeature(csv_path):
+    image_features = {}
+    with open(csv_path, 'r') as reader:
+        csv_reader = csv.reader(reader)
+        
+        for feature in csv_reader:
+            keyword = feature.pop(0)
+            #normalized distance
+            image_features[keyword] = feature
+
+    return image_features
+
+# Parameters: features dictionary -> filename - feature vector
+# to convert feature dictionary to feature array
+# eg. {'image_name_1: [f1.1, f1.2, ...]', 'image_name_2': [f2.1, f2.2, ...], ...}
+#       -> [[f1.1, f1.2, ...], [f2.1, f2.2, ...], ...]
+
+def features_toArray(data_dict):
+    dataset_feature = []
+    for name, vector in data_dict.iteritems():
+        dataset_feature.append(vector)
+
+    return dataset_feature
+
+def names_toArray(data_dict):
+	dataset_names = []
+	for name, vector in data_dict_iteritems():
+		dataset_names.appened(name)
+
+	return dataset_names
+
+# Parameters: features_dictionary -> filename - feature vector 
+#             labels dictionary -> filename - label integer
+# to convert labels dictionary to labels array
+# eg. {'image_name_1: 2, 'image_name_2': 15, ...}
+#       -> [1, 15, ...]
+# note: because ordering of features dictionary != ordering of labels dictionary,
+#       we need the features dictionary as reference to find the correct corresponding labels
+
+def gndTruth_toArray(data_dict, data_label_dict):
+    dataset_label = []
+    for name, vector in data_dict.iteritems():
+        #array = []
+        #array.append(data_train_label_dict[name[:-4]])
+        dataset_label.append(data_label_dict[name[:-4]])
+
+    return dataset_label
+
+# Parameters: label name : Integer - string
+# converts all labels (aka categories) into an array of just the label name
+# eg. {1: 'label_1', 2: 'label_2', ...} -> [label_1, label_2, ...]
+
+def label_toArray(data_label_dict):
+    data_label = []
+    for name, label_name in data_label_dict.iteritems():
+        #array = []
+        #array.append(vector)
+        data_label.append(label_name)
+
+    return data_label
+
 #print get_venue_list("/Users/Brandon/Dropbox/NUS/Y3S1/CS2108/Lab/Assignment_2/CS2108-Vine-Dataset")
 #print get_mp4_paths(database_path)
 #print get_jpg_dictionary_path("/Users/Brandon/Dropbox/NUS/Y3S1/CS2108/Lab/Assignment_2/CS2108-Vine-Dataset/mp4_frames")

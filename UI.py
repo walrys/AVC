@@ -2,6 +2,7 @@
 import cv2
 import utility.util as util
 import preprocessing.extract_frame as ppf
+import classifier.classify as clf
 from Tkinter import *
 import tkFileDialog
 from PIL import Image, ImageTk, ImageDraw, ImageFont
@@ -15,14 +16,17 @@ class UI_class:
         self.search_path = search_path
         self.master = master
         self.frame_storing_path = frame_storing_path
-        topframe = Frame(self.master)
+        topframe = Frame(self.master, padx=240)
         topframe.pack()
+
+        # initialize query_img_frame
+        self.query_img_frame = 0
 
         #Buttons
         topspace = Label(topframe).grid(row=0, columnspan=2)
-        self.bbutton= Button(topframe, text=" Choose an video ", command=self.browse_query_img)
+        self.bbutton= Button(topframe, text=" Choose a video ", command=self.browse_query_img)
         self.bbutton.grid(row=1, column=1)
-        self.cbutton = Button(topframe, text=" Estimate its venue ", command=self.show_venue_category)
+        self.cbutton = Button(topframe, text=" Estimate venue ", command=self.show_venue_category)
         self.cbutton.grid(row=1, column=2)
         downspace = Label(topframe).grid(row=3, columnspan=4)
 
@@ -30,6 +34,8 @@ class UI_class:
 
 
     def browse_query_img(self):
+        if (self.query_img_frame != 0):
+            self.query_img_frame.destroy()
 
         self.query_img_frame = Frame(self.master)
         self.query_img_frame.pack()
@@ -37,17 +43,19 @@ class UI_class:
         self.filename = tkFileDialog.askopenfile(title='Choose a Video File').name
 
         # clear temp folder storage
-
         temp_frames = os.listdir(self.frame_storing_path)
+        if len(temp_frames) > 0:
+            for frames in temp_frames:
+                os.remove(self.frame_storing_path + "/" + frames)
         
         # extract vid frames to temp storage
         ppf.frameExtract(self.frame_storing_path, self.filename)
-        self.videoname = self.filename.strip().split("/")[-1].replace(".mp4","")
+        temp_frames = os.listdir(self.frame_storing_path)
 
         self.frames = []
         for frame in temp_frames:
-            if self.videoname +"-frame" in frame:
-                self.frames.append(self.frame_storing_path + frame)
+            if frame.endswith(".jpg"):
+                self.frames.append(self.frame_storing_path + "/" + frame)
 
         COLUMNS = len(self.frames)
         self.columns = COLUMNS
@@ -87,11 +95,15 @@ class UI_class:
             venue_list = util.get_venue_list(self.search_path)
 
             # classify video in self.filename, returns an integer
+            
+            # for each feature, get an array
+
+            # concatenate each feature and send it for classification
+
             class_value = 1
 
             # with integer, get venue text
             venue_text = venue_list[class_value]
-
 
             venue_img = Image.open("venue_background.jpg")
             draw = ImageDraw.Draw(venue_img)
@@ -111,4 +123,4 @@ class UI_class:
 
 
 root = Tk()
-window = UI_class(root,search_path='../data/video/', frame_storing_path=frame_path)
+window = UI_class(root,search_path=search_path, frame_storing_path=frame_path)
