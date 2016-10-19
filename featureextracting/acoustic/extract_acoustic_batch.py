@@ -94,7 +94,9 @@ def extractAll(directory,numProcesses):
             extractMultiple(files[i*x:],False)
             for p in jobs:
                 p.join()
+            print
             print "audio features extracted!"
+            print
             for p in jobs:
                 p.terminate()
         else:

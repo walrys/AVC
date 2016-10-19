@@ -31,6 +31,7 @@ def extract(audiodirectory='../../../CS2108-Vine-Dataset/vine/training/audio',ty
     # 5. lengthen features to match longest file and concatenate to get final array
     lengthenAll(audiodirectory,type)
     concatall(audiodirectory+'/long/',audiodirectory+'/long/'+type+'_emsz_'+'long.npy')
+    print 'audio features extracted successfully'
 
 #Concatenates all arrays in the folder
 def concatall(directory,output):
@@ -38,16 +39,20 @@ def concatall(directory,output):
     temp = output[:-4]+'temp.npy'
     for file in os.listdir(directory):
         files.append(directory+'/'+file)
+    print
+    print 'concatenating all files...'
     for i in range(len(files)-1):
-        print 'merging '+str(i+1)+ ' of ' + str(len(files))
+        print 'merging '+str(i+1)+ ' of ' + str(len(files)-1)
         if i==0:
             concatenate(files[i],files[i+1],temp)
         elif i+1==len(files)-1:
             concatenate(temp,files[i+1], output)
-            print 'removing ' + temp +'...'
+            print 'removing temp files...'
             os.remove(temp)
         else:
             concatenate(temp,files[i+1],temp)
+    print 'concatenation complete!'
+    print
 
 #Concatenates 2 2D-arrays of equal height
 def concatenate(file1,file2,output):
@@ -62,16 +67,20 @@ def concatenate(file1,file2,output):
     del result
 
 def shortenAll(directory,type):
+    print 'shortening files...'
     shorten(directory,type+'_'+'spect'+'.npy')
     shorten(directory,type+'_'+'mfcc'+'.npy')
     shorten(directory,type+'_'+'energy'+'.npy')
     shorten(directory,type+'_'+'zero'+'.npy')
+    print 'done'
     
 def lengthenAll(directory,type):
+    print 'lengthening files...'
     lengthen(directory,type+'_'+'spect'+'.npy')
     lengthen(directory,type+'_'+'mfcc'+'.npy')
     lengthen(directory,type+'_'+'energy'+'.npy')
     lengthen(directory,type+'_'+'zero'+'.npy')
+    print 'done'
 
 # 1.shortens all features to shortest length and concatenate into 1D and
 # outputs np.matrix (shape(3000,shortest length*k) where k is number of lines in feature vector
@@ -143,9 +152,8 @@ def lengthen(directory,file):
             for line in dict[arr]:
                 if(len(line) > GL):
                     GL = len(line)
-        print "GL = " + str(GL)
-        print 'width = ' + str(width)
-        
+        print
+        print "GL = " + str(GL) + ' width = ' + str(width)
         #initialise result array
         result = []
         
@@ -164,8 +172,9 @@ def lengthen(directory,file):
             #add concatenated array to result    
             result.append(x)
             del x
-            printProgress (i, len(dict), 'Concatenating', '', decimals = 1, barLength = 50)
+            printProgress (i, len(dict), 'Lengthening', '', decimals = 1, barLength = 50)
             i+=1
+    print
     directory+='/long'
     if not os.path.exists(directory):
         os.makedirs(directory)
@@ -186,6 +195,7 @@ def collate(featuretype,type,directory = "./"):
             dict[filename] = array
         counter+=1
         printProgress(counter, foldersize, prefix = featuretype+':', suffix = '', decimals = 2, barLength = 50)
+    print
     dict = collections.OrderedDict(sorted(dict.items()))
     directory += '/'+type
     if not os.path.exists(directory):
@@ -201,6 +211,8 @@ def collateall(directory = './', type = 'train'):
     
 def removeVectors(directory):
     print 'removing individual feature files (.npy)...'
+    print "done!"
+    print
     for file in os.listdir(directory):
         if file.endswith(".npy"):
             os.remove(directory+'/'+file)
