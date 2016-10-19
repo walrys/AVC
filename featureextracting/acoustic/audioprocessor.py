@@ -12,8 +12,7 @@ import extract_acoustic_batch as extractor
 #           ii. type of data (training/validation)
 #           iii.number of processes to handle extraction (depending on your machine)
 # OUTPUT:   final concatenated array to be used for classifier (convert to matrix first!)
-
-def extract(audiodirectory='../../../CS2108-Vine-Dataset/vine/training/audio',type= 'train',processes=6):
+def extract(audiodirectory='../../../CS2108-Vine-Dataset/vine/validation/audio',type= 'valid',processes=6):
     # 1. extract all feature files into directory
     # WARNING: TAKES AT LEAST 10 MINUTES
     extractor.extractAll(audiodirectory,processes)
@@ -31,6 +30,7 @@ def extract(audiodirectory='../../../CS2108-Vine-Dataset/vine/training/audio',ty
     # 5. lengthen features to match longest file and concatenate to get final array
     lengthenAll(audiodirectory,type)
     concatall(audiodirectory+'/long/',audiodirectory+'/long/'+type+'_emsz_'+'long.npy')
+    print 'audio features extracted successfully'
 
 #Concatenates all arrays in the folder
 def concatall(directory,output):
@@ -38,16 +38,20 @@ def concatall(directory,output):
     temp = output[:-4]+'temp.npy'
     for file in os.listdir(directory):
         files.append(directory+'/'+file)
+    print
+    print 'concatenating all files...'
     for i in range(len(files)-1):
-        print 'merging '+str(i+1)+ ' of ' + str(len(files))
+        print 'merging '+str(i+1)+ ' of ' + str(len(files)-1)
         if i==0:
             concatenate(files[i],files[i+1],temp)
         elif i+1==len(files)-1:
             concatenate(temp,files[i+1], output)
-            print 'removing ' + temp +'...'
+            print 'removing temp files...'
             os.remove(temp)
         else:
             concatenate(temp,files[i+1],temp)
+    print 'concatenation complete!'
+    print
 
 #Concatenates 2 2D-arrays of equal height
 def concatenate(file1,file2,output):
@@ -62,90 +66,42 @@ def concatenate(file1,file2,output):
     del result
 
 def shortenAll(directory,type):
-    shorten(directory,type+'_'+'spect'+'.npy')
-    shorten(directory,type+'_'+'mfcc'+'.npy')
-    shorten(directory,type+'_'+'energy'+'.npy')
-    shorten(directory,type+'_'+'zero'+'.npy')
+    print 'shortening files...'
+    fitLength(38,directory,type+'_'+'spect'+'.npy','short')
+    fitLength(38,directory,type+'_'+'mfcc'+'.npy','short')
+    fitLength(38,directory,type+'_'+'energy'+'.npy','short')
+    fitLength(38,directory,type+'_'+'zero'+'.npy','short')
+    print 'done'
     
 def lengthenAll(directory,type):
-    lengthen(directory,type+'_'+'spect'+'.npy')
-    lengthen(directory,type+'_'+'mfcc'+'.npy')
-    lengthen(directory,type+'_'+'energy'+'.npy')
-    lengthen(directory,type+'_'+'zero'+'.npy')
+    print 'lengthening files...'
+    fitLength(302,directory,type+'_'+'spect'+'.npy','long')
+    fitLength(302,directory,type+'_'+'mfcc'+'.npy','long')
+    fitLength(302,directory,type+'_'+'energy'+'.npy','long')
+    fitLength(302,directory,type+'_'+'zero'+'.npy','long')
+    print 'done'
 
 # 1.shortens all features to shortest length and concatenate into 1D and
 # outputs np.matrix (shape(3000,shortest length*k) where k is number of lines in feature vector
-# eg. shorten('./','mfcc.npy')
-def shorten(directory,file):
-    dict = np.load(directory+'/'+file).item()
-    dict = collections.OrderedDict(sorted(dict.items()))
-    isContiguous = dict.itervalues().next().flags['F_CONTIGUOUS']
-    result = []
-    if(isContiguous): #eg. energy, zero
-        #find shortest length SL
-        SL = 9999999
-        for line in dict:
-            if(len(dict[line]) < SL):
-                SL = len(dict[line])
-        #extract array
-        for line in dict: #for every feature vector in dictionary
-            result.append((dict[line])[:SL]) #trim to length SL and add to array result
-    
-    else: #eg. mfcc, spectrum
-        #find shortest length SL
-        SL = 9999999
-        for arr in dict:
-            for line in dict[arr]:
-                if(len(line) < SL):
-                    SL = len(line)
-        #extract array
-        for arr in dict:
-            x = np.array([])
-            for line in dict[arr]:
-                x = np.append(x,line[:SL],axis=0) #trim to length SL
-            result.append(x) #add concatenated array to result
-    
-    directory+='/short'
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-    np.save(directory+'/'+file[:-4]+'_short.npy',result)
-    
-# 2. lengthen all features to max length and concatenate into 1D and outputs array (shape(3000,max*k) where k is number of lines in feature vector
-# eg. lengthen('./','mfcc.npy')
-def lengthen(directory,file):
+# eg. shorten(shortest feature length,'./','mfcc.npy','short')
+def fitLength(fit,directory,file,mode):
     dict = np.load(directory+'/'+file).item()
     dict = collections.OrderedDict(sorted(dict.items()))
     
     isContiguous = dict.itervalues().next().flags['F_CONTIGUOUS']
     if(isContiguous): #eg. energy, zero
         result = []
-        #find greatest length GL
-        GL = 0
-        for line in dict:
-            if(len(dict[line]) > GL):
-                GL = len(dict[line])
         #extract array
         for line in dict: #for every feature vector in dictionary
             a = list(dict[line])
             b = list(dict[line])
-            while(len(a)<GL):
-                a = a + b #duplicate array to fit GL
-            result.append(a[:GL]) #trim to length GL and add to array result
+            while(len(a)<fit):
+                a = a + b #duplicate array to fit fit
+            result.append(a[:fit]) #trim to length fit and add to array result
             del a
             del b
     
     else: #eg. mfcc, spectrum
-        #find greatest length GL
-        GL = 0
-        width = 0
-        for arr in dict:
-            width = len(dict[arr])
-            for line in dict[arr]:
-                if(len(line) > GL):
-                    GL = len(line)
-        print "GL = " + str(GL)
-        print 'width = ' + str(width)
-        
         #initialise result array
         result = []
         
@@ -156,20 +112,21 @@ def lengthen(directory,file):
             for line in dict[arr]:
                 a = list(line)
                 b = list(line)
-                while(len(a) < GL):
+                while(len(a) < fit):
                     a = a + b
-                x += (a[:GL]) #trim to length GL
+                x += (a[:fit]) #trim to fit
                 del a
                 del b
             #add concatenated array to result    
             result.append(x)
             del x
-            printProgress (i, len(dict), 'Concatenating', '', decimals = 1, barLength = 50)
+            printProgress (i, len(dict), 'Fitting to ' + str(fit), '', decimals = 1, barLength = 50)
             i+=1
-    directory+='/long'
+    print
+    directory+='/'+mode
     if not os.path.exists(directory):
         os.makedirs(directory)
-    np.save(directory+'/'+file[:-4]+'_long.npy',result)
+    np.save(directory+'/'+file[:-4]+mode+'.npy',result)
 
     
 # gather all feature vectors and save it into a dictionary. (eg. MFCC.npy, energy.npy)
@@ -186,6 +143,7 @@ def collate(featuretype,type,directory = "./"):
             dict[filename] = array
         counter+=1
         printProgress(counter, foldersize, prefix = featuretype+':', suffix = '', decimals = 2, barLength = 50)
+    print
     dict = collections.OrderedDict(sorted(dict.items()))
     directory += '/'+type
     if not os.path.exists(directory):
@@ -201,6 +159,8 @@ def collateall(directory = './', type = 'train'):
     
 def removeVectors(directory):
     print 'removing individual feature files (.npy)...'
+    print "done!"
+    print
     for file in os.listdir(directory):
         if file.endswith(".npy"):
             os.remove(directory+'/'+file)

@@ -16,7 +16,6 @@ import librosa
 import numpy as np
 import os
 import sys
-import multiprocessing
 
 
 # Print iterations progress
@@ -70,14 +69,6 @@ def getAcousticFeatures(audio_reading_path):
     return feature_mfcc, feature_spect, feature_zerocrossing, feature_energy
 
     
-def extractAllCSV(directory='./'):
-    files = []
-    for file in os.listdir(directory):
-        if file.endswith(".wav"):
-            files.append(directory+'/'+file)
-            
-    extractMultipleCSV(files)
-    
 def extractAll(directory,numProcesses):
     files = []
     for file in os.listdir(directory):
@@ -86,34 +77,36 @@ def extractAll(directory,numProcesses):
             
     print 'extracting...'
     
-    jobs = []
-    n = numProcesses
-    x = len(files)//n
-    for i in range(n):
-        if(i+1 == n):
-            extractMultiple(files[i*x:],False)
-            if (os.name == 'nt'):
-                for p in jobs:
-                    p.join()
-                print "audio features extracted!"
-                for p in jobs:
-                    p.terminate()
+    if (numProcesses==1):
+        extractMultiple(files,False)
+    else:
+        import multiprocessing
 
-        else:
-            if os.name == 'nt':
-                p = multiprocessing.Process(target=extractMultiple, args=(files[i*x:i*x+x],True,))
-                jobs.append(p)
-                p.start()
-            elif os.name == 'posix':
-                # fork process
-                p = os.fork()
-                #then run another python program using exec
-                if p == 0:
-                    os.execv()
+        jobs = []
+        n = numProcesses
+        x = len(files)//n
+        for i in range(n):
+            if(i+1 == n):
+                extractMultiple(files[i*x:],False)
+                if (os.name == 'nt'):
+                    for p in jobs:
+                        p.join()
+                    print "audio features extracted!"
+                    for p in jobs:
+                        p.terminate()
+            else:
+                if os.name == 'nt':
+                    p = multiprocessing.Process(target=extractMultiple, args=(files[i*x:i*x+x],True,))
+                    jobs.append(p)
+                    p.start()
+                elif os.name == 'posix':
+                    # fork process
+                    p = os.fork()
+                    #then run another python program using exec
+                    if p == 0:
+                        os.execv()
 
-                jobs.append(p)
-
-            print "started!"
+                    jobs.append(p)
             
 # extract files in list 'paths' (eg. paths[0] = '1000046931730481152.wav')
 def extractMultiple(paths,isProcess):
@@ -129,18 +122,7 @@ def extractMultiple(paths,isProcess):
         if not isProcess:
             printProgress(i, numFiles, prefix = 'Extracting:', suffix = '', decimals = 2, barLength = 50)
 
-def extractMultipleCSV(path):
-    numFiles = len(path)
-    for i in range(numFiles):
-        audio_reading_path = path[i]
-        feature_mfcc, feature_spect, feature_zerocrossing, feature_energy = getAcousticFeatures(audio_reading_path=audio_reading_path)
-        acoustic_storing_path = audio_reading_path[:-4]
-        np.savetxt(acoustic_storing_path+"_mfcc.csv", feature_mfcc, delimiter=",")
-        np.savetxt(acoustic_storing_path+"_spect.csv", feature_spect, delimiter=",")
-        np.savetxt(acoustic_storing_path+"_zero.csv", feature_zerocrossing, delimiter=",")
-        np.savetxt(acoustic_storing_path+"_energy.csv", feature_energy, delimiter=",")
-        printProgress(i, numFiles, prefix = 'Extracting CSVs:', suffix = 'Complete', decimals = 2, barLength = 50)
-        
+      
 def extractAllFeaturesInDirectorySlow(audio_directory):
     counter = 0.0
     foldersize = len([name for name in os.listdir(audio_directory)])
