@@ -8,7 +8,7 @@ import tkFileDialog
 from PIL import Image, ImageTk, ImageDraw, ImageFont
 import os
 
-frame_path = "/Users/Brandon/Documents/CS2108-Vine-Dataset/mp4_frame_temp"
+frame_path = "/Users/Brandon/Documents/CS2108-Vine-Dataset/mp4_temp_frame"
 search_path = "/Users/Brandon/Documents/CS2108-Vine-Dataset"
 
 class UI_class:

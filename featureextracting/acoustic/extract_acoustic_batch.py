@@ -92,15 +92,28 @@ def extractAll(directory,numProcesses):
     for i in range(n):
         if(i+1 == n):
             extractMultiple(files[i*x:],False)
-            for p in jobs:
-                p.join()
-            print "audio features extracted!"
-            for p in jobs:
-                p.terminate()
+            if (os.name == 'nt'):
+                for p in jobs:
+                    p.join()
+                print "audio features extracted!"
+                for p in jobs:
+                    p.terminate()
+
         else:
-            p = multiprocessing.Process(target=extractMultiple, args=(files[i*x:i*x+x],True,))
-            jobs.append(p)
-            p.start()
+            if os.name == 'nt':
+                p = multiprocessing.Process(target=extractMultiple, args=(files[i*x:i*x+x],True,))
+                jobs.append(p)
+                p.start()
+            elif os.name == 'posix':
+                # fork process
+                p = os.fork()
+                #then run another python program using exec
+                if p == 0:
+                    os.execv()
+
+                jobs.append(p)
+
+            print "started!"
             
 # extract files in list 'paths' (eg. paths[0] = '1000046931730481152.wav')
 def extractMultiple(paths,isProcess):
@@ -154,5 +167,5 @@ def extractAllFeaturesInDirectorySlow(audio_directory):
         
     print "done"
     
-if __name__ == '__main__':
-    extractAllFeatures("./")
+#if __name__ == '__main__':
+    #extractAllFeatures("./")
