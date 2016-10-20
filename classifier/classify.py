@@ -5,8 +5,8 @@ import classifier_utility.class_util as util
 from sklearn import svm
 from sklearn.metrics import classification_report
 
-feature_store_path = "/Users/Brandon/Dropbox/NUS/Y3S1/CS2108/Lab/Assignment_2/Audio_Classifier/feature_csv"
-video_store_path = "/Users/Brandon/Documents/CS2108-Vine-Dataset"
+feature_store_path = "../data"
+video_store_path = "../data"
 
 # X_train -> array of feature vectors for training machine learning (ML) model
 # Y_train -> array of corrosponding correct labels to X_train
@@ -53,6 +53,7 @@ def batch_SVM(X_train_array, Y_train_array, X_test_array, Y_gnd_truth_array, lab
     #print Y_predicted
     # 5. Save the predicted results and ground truth.
     #sio.savemat(output_path, {'Y_predicted': Y_predicted, 'Y_gnd': Y_gnd})
+    print Y_predicted
     print classification_report(Y_gnd_truth, Y_predicted, target_names=label_names)
 
     return Y_predicted

@@ -4,6 +4,7 @@ import os, sys
 import moviepy.editor as mp
 import preprocess_utility.pp_util as util
 
+
 def getAudioClip(video_reading_path, audio_storing_path):
 	"""if (os.path.basename(video_reading_path) == "1001032302756761600.mp4"
 		or os.path.basename(video_reading_path) == "1005958035061297152.mp4"):
