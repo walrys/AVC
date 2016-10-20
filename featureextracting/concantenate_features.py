@@ -21,19 +21,19 @@ if __name__ == "__main__":
     #print validation_gnd_truth
 
     # for each feature, extract out vectors into 2D arrays according to order
-    #train_image = np.load(feature_store_path + "/train_individual/train_image_feature.npy")
+    train_image = np.load(feature_store_path + "/train_individual/train_image_feature.npy")
     valid_image = np.load(feature_store_path + "/validation_individual/valid_image_feature.npy")
 
     #print train_image.shape
     print valid_image.shape
 
-    type = 'emsz_long'
+    type = 'emsz_short'
     train_energy = np.load(feature_store_path + '/train_individual/train_'+type+'.npy')
     valid_energy = np.load(feature_store_path + '/validation_individual/valid_'+type+'.npy')
 
     #print train_energy.shape
-    #print valid_energy
+    print valid_energy.shape
 
     # concatenate features and save as npy
     #util.concatall(feature_store_path + "/train_individual", feature_store_path + "/train_combined")
-    #util.concatall(feature_store_path + "/validation_individual", feature_store_path + "/validation_combined")
+    util.concatall(feature_store_path + "/validation_individual", feature_store_path + "/validation_combined")

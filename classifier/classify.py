@@ -14,7 +14,7 @@ video_store_path = "../data"
 # Y_gnd_truth -> array of corrosponding correct labels to X_test
 # label_names -> array of label names (aka categories) for each integer in X_train and Y_gnd_truth
 
-def batch_SVM(X_train_array, Y_train_array, X_test_array, Y_gnd_truth_array, label_names_array):
+def batch_SVM(X_train_array, Y_train_array, X_test_array, Y_gnd_truth_array, label_names_array, np_output_path, text_output_path):
 
     # 1. Convert (some) input array into numpy matrices
     X_train = np.asmatrix(X_train_array)
@@ -54,8 +54,14 @@ def batch_SVM(X_train_array, Y_train_array, X_test_array, Y_gnd_truth_array, lab
     # 5. Save the predicted results and ground truth.
     #sio.savemat(output_path, {'Y_predicted': Y_predicted, 'Y_gnd': Y_gnd})
     print Y_predicted
-    print classification_report(Y_gnd_truth, Y_predicted, target_names=label_names)
+    np.save(np_output_path, Y_predicted)
 
+    report = classification_report(Y_gnd_truth, Y_predicted, target_names=label_names)
+    print report
+
+    with open(text_output_path, 'w') as writer:
+        writer.write(report)
+        
     return Y_predicted
 
 # takes a single feature vector, X_test_array and finds the predicted class
@@ -73,35 +79,3 @@ def single_SVM(X_train_array, Y_train_array, X_test_array):
     Y_predicted = model.predict(X_test)
 
     return Y_predicted
-
-if __name__ == '__main__':
-    # may put in args to indicate path
-    
-    # for each feature, extract out vectors into 2D arrays according to data_train_dict order
-    train_dict = util.extractFeature(feature_store_path + "/DL_image_training_features.csv")
-    train_gnd_truth_dict = util.get_video_category(video_store_path, "vine-venue-training.txt")
-    
-    validation_dict = util.extractFeature(feature_store_path + "/DL_image_validation_features.csv")
-    validation_gnd_truth_dict = util.get_video_category(video_store_path, "vine-venue-validation.txt")
-
-    venue_label_dict = util.get_venue_list(video_store_path)
-    
-    # transform dictionaries to array
-    X_train = util.features_toArray(train_dict)
-    Y_train = util.gndTruth_toArray(train_dict, train_gnd_truth_dict)
-    
-    X_test = util.features_toArray(validation_dict)
-    Y_gnd_truth = util.gndTruth_toArray(validation_dict, validation_gnd_truth_dict)
-
-    label_names = util.label_toArray(venue_label_dict)
-
-    #print dataset_train
-    #print dataset_train_label
-
-    #print dataset_validation
-    #print dataset_validation_label
-
-    #print dataset_label_names
-
-    # Run SVM on datasets
-    batch_SVM(X_train, Y_train, X_test, Y_gnd_truth, label_names)

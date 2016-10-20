@@ -39,6 +39,7 @@ def concatenate(file1,file2,output):
     del arr1
     del arr2
     np.save(output,result)
+    print len(result[0])
     del result
 
 def concatall(directory,output):
@@ -51,6 +52,8 @@ def concatall(directory,output):
     for i in xrange(len(files)-1):
         print 'merging '+str(i+1)+ ' of ' + str(len(files)-1)
         if files[i].endswith(".npy"):
+            if (len(os.listdir(output)) > 0 and os.listdir(output)[0] == ".DS_Store"):
+                os.remove(output + "/.DS_Store")
             if len(os.listdir(output)) == 0:
                 concatenate(files[i],files[i+1], temp)
             elif i+1==len(files)-1:
