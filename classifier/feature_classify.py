@@ -1,4 +1,4 @@
-import classify
+import SVM
 import numpy as np
 import classifier_utility.class_util as util
 
@@ -26,7 +26,7 @@ if __name__ == '__main__':
         type=name
         train_acoustic = np.load(data_path + '/train_individual/train_'+type+'.npy')
         valid_acoustic = np.load(data_path + '/validation_individual/valid_'+type+'.npy')
-        classify.batch_SVM(train_acoustic, train_gnd, valid_acoustic, valid_gnd, venues, np_output_path + "/" + type + "_Y_predict.npy", report_output_path + "/" + type + "_report.txt")
+        SVM.batch_SVM(train_acoustic, train_gnd, valid_acoustic, valid_gnd, venues, np_output_path + "/" + type + "_Y_predict.npy", report_output_path + "/" + type + "_report.txt")
 
 
     #image features
@@ -42,10 +42,10 @@ if __name__ == '__main__':
 
     #STUFF WE NEED:
 
-    classify.batch_SVM(train_image, train_gnd, valid_image, valid_gnd, venues, np_output_path + "/image_Y_predict.npy", report_output_path + "/image_report.txt")
+    SVM.batch_SVM(train_image, train_gnd, valid_image, valid_gnd, venues, np_output_path + "/image_Y_predict.npy", report_output_path + "/image_report.txt")
 
-    classify.batch_SVM(train_combined, train_gnd, valid_combined, valid_gnd, venues, np_output_path + "/combined_Y_predict.npy", report_output_path + "/combined_report.txt")
+    SVM.batch_SVM(train_combined, train_gnd, valid_combined, valid_gnd, venues, np_output_path + "/combined_Y_predict.npy", report_output_path + "/combined_report.txt")
 
-    classify.batch_SVM(train_combined, train_gnd, valid_combined, valid_gnd, venues, np_output_path + "/combined_Y_predict.npy", report_output_path + "/combined_report.txt")
+    SVM.batch_SVM(train_combined, train_gnd, valid_combined, valid_gnd, venues, np_output_path + "/combined_Y_predict.npy", report_output_path + "/combined_report.txt")
     
-    classify.batch_SVM(train_combined, train_gnd, valid_combined, valid_gnd, venues, np_output_path + "/combined_Y_predict.npy", report_output_path + "/combined_report.txt")
+    SVM.batch_SVM(train_combined, train_gnd, valid_combined, valid_gnd, venues, np_output_path + "/combined_Y_predict.npy", report_output_path + "/combined_report.txt")
