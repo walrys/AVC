@@ -20,7 +20,7 @@ if __name__ == '__main__':
     venues = util.get_venue_list(data_path)
 
     #sound features
-    energy_names = ['emsz_short', 'energyshort', 'mfccshort', 'spectshort', 'zeroshort']
+    energy_names = ['emsz_short' 'energyshort', 'mfccshort', 'spectshort', 'zeroshort']
     
     for name in energy_names:
         type=name
@@ -44,8 +44,4 @@ if __name__ == '__main__':
 
     SVM.batch_SVM(train_image, train_gnd, valid_image, valid_gnd, venues, np_output_path + "/image_Y_predict.npy", report_output_path + "/image_report.txt")
 
-    SVM.batch_SVM(train_combined, train_gnd, valid_combined, valid_gnd, venues, np_output_path + "/combined_Y_predict.npy", report_output_path + "/combined_report.txt")
-
-    SVM.batch_SVM(train_combined, train_gnd, valid_combined, valid_gnd, venues, np_output_path + "/combined_Y_predict.npy", report_output_path + "/combined_report.txt")
-    
     SVM.batch_SVM(train_combined, train_gnd, valid_combined, valid_gnd, venues, np_output_path + "/combined_Y_predict.npy", report_output_path + "/combined_report.txt")

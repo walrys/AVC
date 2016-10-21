@@ -43,17 +43,21 @@ def batch_SVM(X_train_array, Y_train_array, X_test_array, Y_gnd_truth_array, lab
     #print label_validate
 
     # 3. Train the classifier.
-    model = svm.SVC(kernel='rbf', degree=3, gamma='auto', shrinking=True, verbose=False, max_iter=-1)
+    model = svm.SVC(kernel='linear', degree=3, gamma='auto', shrinking=True, verbose=False, max_iter=-1)
     model.fit(X_train, Y_train)
 
     # should give labels in theory
     Y_predicted = model.predict(X_test)
     print('SVM Train Done.')
+    #for i in xrange(len(Y_predicted)):
+        #Y_predicted[i] = int(round(Y_predicted[i]))
 
     #print Y_predicted
     # 5. Save the predicted results and ground truth.
     #sio.savemat(output_path, {'Y_predicted': Y_predicted, 'Y_gnd': Y_gnd})
     print Y_predicted
+
+
     np.save(np_output_path, Y_predicted)
 
     report = classification_report(Y_gnd_truth, Y_predicted, target_names=label_names)
@@ -67,7 +71,7 @@ def batch_SVM(X_train_array, Y_train_array, X_test_array, Y_gnd_truth_array, lab
 # takes a single feature vector, X_test_array and finds the predicted class
 # returns an integer corrosponding to the predicted class
 
-def single_SVM(X_train_array, Y_train_array, X_test_array):
+def create_SVM(X_train_array, Y_train_array, X_test_array):
     X_train = np.asmatrix(X_train_array)
     Y_train = Y_train_array
 
@@ -76,6 +80,4 @@ def single_SVM(X_train_array, Y_train_array, X_test_array):
     model = svm.SVC(kernel='rbf', degree=3, gamma='auto', shrinking=True, verbose=False, max_iter=-1)
     model.fit(X_train, Y_train)
 
-    Y_predicted = model.predict(X_test)
-
-    return Y_predicted
+    return model

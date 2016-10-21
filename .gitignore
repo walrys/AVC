@@ -1,0 +1,10 @@
+data/report/class_report_linear_long/emsz_long_report.txt
+data/report/class_report_linear_long/energylong_report.txt
+data/report/class_report_linear_long/mfcclong_report.txt
+data/report/class_report_linear_long/spectlong_report.txt
+data/report/class_report_linear_long/zerolong_report.txt
+data/results/Y_predict.zip
+data/results/Y_predict_linear.zip
+data/results/Y_predict_linear_long.zip
+data/report/class_report_linear_short.zip
+data/report/class_report_rbf.zip
