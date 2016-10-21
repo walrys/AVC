@@ -82,3 +82,6 @@ data/report/short(poly)/spectshort_report.txt
 data/report/spectzeropad_report.txt
 data/results/spectzeropad_Y_predict.npy
 data/validation_individual/valid_zerozeropad.npy
+classifier/SVM.pyc
+data/emsz_zeropad_report.txt
+data/report/emsz_zeropad_report.txt
