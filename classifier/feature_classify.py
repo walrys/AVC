@@ -6,6 +6,7 @@ data_path = "../data"
 np_output_path = "../data/results"
 report_output_path = "../data/report"
 
+
 if __name__ == '__main__':
 
     #ground truth unordered
@@ -20,13 +21,14 @@ if __name__ == '__main__':
     venues = util.get_venue_list(data_path)
 
     #sound features
-    acoustic_names = ['emsz_short', 'energyshort', 'mfccshort', 'spectshort', 'zeroshort']
+    acoustic_names = ['emsz_zeropad', 'energyzeropad', 'mfcczeropad', 'spectzeropad', 'zerozeropad']
     
     for name in acoustic_names:
-        type=name
+        type = name
         train_acoustic = np.load(data_path + '/train_individual/train_'+type+'.npy')
         valid_acoustic = np.load(data_path + '/validation_individual/valid_'+type+'.npy')
-        SVM.batch_SVM(train_acoustic, train_gnd, valid_acoustic, valid_gnd, venues, np_output_path + "/" + type + "_Y_predict.npy", report_output_path + "/" + type + "_report.txt")
+        #SVM.batch_SVM(train_acoustic, train_gnd, valid_acoustic, valid_gnd, venues, np_output_path + "/" + type + "_Y_predict.npy", report_output_path + "/" + type + "_report.txt")
+        SVM.single_classifier_method(train_acoustic, train_gnd, valid_acoustic, valid_gnd, venues, np_output_path + "/" + type, report_output_path + "/" + type)
 
 
     #image features

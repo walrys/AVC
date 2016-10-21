@@ -60,6 +60,21 @@ def extractFeature(csv_path):
 
     return image_features
 
+def get_binary_classes(label_names_array, non_binary_labels):
+    Y_binary_dict = {}
+
+    for i in xrange(len(label_names_array)):
+        Y_binary_labelarray = []
+        for j in non_binary_labels:
+            if j == i+1:
+                Y_binary_labelarray.append(1)
+            else:
+                Y_binary_labelarray.append(0)
+        
+        Y_binary_dict[i+1] = Y_binary_labelarray
+    
+    return Y_binary_dict
+
 # Parameters: features dictionary -> filename - feature vector
 # to convert feature dictionary to feature array
 # eg. {'image_name_1: [f1.1, f1.2, ...]', 'image_name_2': [f2.1, f2.2, ...], ...}

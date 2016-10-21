@@ -8,6 +8,47 @@ from sklearn.metrics import classification_report
 feature_store_path = "../data"
 video_store_path = "../data"
 
+def find_f1_score(save_location, Y_gnd_truth):
+    # load features, find f1 score
+    score = 0.0
+    total = 0.0
+    predicted = np.load(save_location)
+    for i in xrange(len(Y_gnd_truth)):
+        if Y_gnd_truth[i] == 1:
+            total += 1.0
+        if predicted[i] == 1 and Y_gnd_truth[i] == 1:
+            score += 1.0
+
+    recall = (score / total)
+    precision = (score / len(Y_gnd_truth))
+
+    if (recall+precision > 0):
+        f1 = 2.0*(precision*recall)/(precision+recall)
+    else:
+        f1 = 0
+
+    return recall, precision, f1
+
+    # if equal, find a way to resolve
+
+def single_classifier_method(X_train_array, Y_train_array, X_test_array, Y_gnd_truth_array, label_names_array, np_output_path, text_output_path):
+
+    Y_train_class_dict = util.get_binary_classes(label_names_array, Y_train_array)
+    Y_valid_class_dict = util.get_binary_classes(label_names_array, Y_gnd_truth_array)
+
+    labels = [0, 1]
+    #print Y_train_class
+    #print Y_valid_class
+    for i in xrange(len(label_names_array)):
+        filename = "score_" + str(i+1) + ".txt"
+        Y_predicted = batch_SVM(X_train_array, Y_train_class_dict[i+1], X_test_array, Y_valid_class_dict[i+1], labels, np_output_path + str(i) + "_Y_predict.npy", text_output_path + label_names_array[i] + "_report.txt")
+        recall, precision, f1 = find_f1_score(np_output_path + str(i) + "_Y_predict.npy", Y_valid_class_dict[i+1])
+        result = label_names_array[i] + ":\n" + "recall: " + str(recall) + "\n" + "precision: " + str(precision) + "\n" + "f1: " + str(f1) + "\n"
+        
+        path_name = text_output_path + "_report.txt"
+        with open(path_name, 'a') as writer:
+            writer.write(result + "\n")
+
 # X_train -> array of feature vectors for training machine learning (ML) model
 # Y_train -> array of corrosponding correct labels to X_train
 # X_test -> array of feature vectors for validating ML model
@@ -55,16 +96,16 @@ def batch_SVM(X_train_array, Y_train_array, X_test_array, Y_gnd_truth_array, lab
     #print Y_predicted
     # 5. Save the predicted results and ground truth.
     #sio.savemat(output_path, {'Y_predicted': Y_predicted, 'Y_gnd': Y_gnd})
-    print Y_predicted
+    #print Y_predicted
 
 
     np.save(np_output_path, Y_predicted)
 
-    report = classification_report(Y_gnd_truth, Y_predicted, target_names=label_names)
-    print report
+    #report = classification_report(Y_gnd_truth, Y_predicted, target_names=label_names)
+    #print report
 
-    with open(text_output_path, 'w') as writer:
-        writer.write(report)
+    #with open(text_output_path, 'w') as writer:
+        #writer.write(report)
         
     return Y_predicted
 
