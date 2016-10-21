@@ -2,7 +2,6 @@
 import cv2
 import utility.util as util
 import preprocessing.extract_frame as ppf
-import classifier.classify as clf
 #import featureextracting.concantenate_features_new as fe
 from Tkinter import *
 import tkFileDialog
