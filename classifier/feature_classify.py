@@ -20,9 +20,9 @@ if __name__ == '__main__':
     venues = util.get_venue_list(data_path)
 
     #sound features
-    energy_names = ['emsz_short', 'energyshort', 'mfccshort', 'spectshort', 'zeroshort']
+    acoustic_names = ['emsz_short', 'energyshort', 'mfccshort', 'spectshort', 'zeroshort']
     
-    for name in energy_names:
+    for name in acoustic_names:
         type=name
         train_acoustic = np.load(data_path + '/train_individual/train_'+type+'.npy')
         valid_acoustic = np.load(data_path + '/validation_individual/valid_'+type+'.npy')
