@@ -1,34 +1,34 @@
-                   precision    recall  f1-score   support
+                  precision    recall  f1-score   support
 
-             City       0.00      0.00      0.00        30
-       Theme Park       0.00      0.00      0.00        30
-     Neighborhood       0.00      0.00      0.00        30
-   Other Outdoors       0.00      0.00      0.00        30
-             Park       0.14      0.03      0.05        30
-            Beach       0.00      0.00      0.00        30
-      Music Venue       0.00      0.00      0.00        30
-          Airport       0.29      0.17      0.21        30
-       University       0.17      0.03      0.06        30
-         Baseball       0.00      0.00      0.00        30
-             Home       0.20      0.03      0.06        30
-         Football       0.00      0.00      0.00        30
-          Stadium       0.17      0.03      0.06        30
-             Mall       0.00      0.00      0.00        30
-       Basketball       0.00      0.00      0.00        30
-       Art Museum       1.00      0.10      0.18        30
-     Concert Hall       0.12      0.03      0.05        30
-        Nightclub       0.00      0.00      0.00        30
-              Zoo       0.12      0.03      0.05        30
-    Entertainment       0.00      0.00      0.00        30
-           Travel       0.10      0.07      0.08        30
-   Plaza / Square       0.25      0.03      0.06        30
-           Hockey       0.00      0.00      0.00        30
-            Hotel       0.08      0.03      0.05        30
-        Rock Club       0.04      1.00      0.08        30
-         Landmark       0.00      0.00      0.00        30
-           Soccer       0.00      0.00      0.00        30
-    Historic Site       0.25      0.03      0.06        30
-           Resort       0.00      0.00      0.00        30
-Other - Buildings       0.00      0.00      0.00        30
+             Cit       0.00      0.00      0.00        30
+       Theme Par       0.00      0.00      0.00        30
+     Neighborhoo       0.00      0.00      0.00        30
+   Other Outdoor       0.00      0.00      0.00        30
+             Par       0.00      0.00      0.00        30
+            Beac       0.00      0.00      0.00        30
+      Music Venu       0.00      0.00      0.00        30
+          Airpor       0.00      0.00      0.00        30
+       Universit       0.00      0.00      0.00        30
+         Basebal       0.00      0.00      0.00        30
+             Hom       0.00      0.00      0.00        30
+         Footbal       0.00      0.00      0.00        30
+          Stadiu       0.00      0.00      0.00        30
+             Mal       0.00      0.00      0.00        30
+       Basketbal       0.00      0.00      0.00        30
+       Art Museu       0.00      0.00      0.00        30
+     Concert Hal       0.00      0.00      0.00        30
+        Nightclu       0.00      0.00      0.00        30
+              Zo       0.00      0.00      0.00        30
+    Entertainmen       0.00      0.00      0.00        30
+           Trave       0.00      0.00      0.00        30
+   Plaza / Squar       0.00      0.00      0.00        30
+           Hocke       0.00      0.00      0.00        30
+            Hote       0.00      0.00      0.00        30
+        Rock Clu       0.00      0.00      0.00        30
+         Landmar       0.00      0.00      0.00        30
+           Socce       0.00      0.00      0.00        30
+    Historic Sit       0.00      0.00      0.00        30
+           Resor       0.03      0.97      0.06        30
+Other - Building       0.00      0.00      0.00        30
 
-      avg / total       0.10      0.05      0.03       900
+     avg / total       0.00      0.03      0.00       900

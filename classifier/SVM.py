@@ -43,7 +43,7 @@ def batch_SVM(X_train_array, Y_train_array, X_test_array, Y_gnd_truth_array, lab
     #print label_validate
 
     # 3. Train the classifier.
-    model = svm.SVC(kernel='rbf', degree=3, gamma='auto', shrinking=True, verbose=False, max_iter=-1)
+    model = svm.SVC(kernel='linear', degree=3, gamma='auto', shrinking=True, verbose=False, max_iter=-1)
     model.fit(X_train, Y_train)
 
     # should give labels in theory

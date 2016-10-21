@@ -12,24 +12,28 @@ import extract_acoustic_batch as extractor
 #           ii. type of data (training/validation)
 #           iii.number of processes to handle extraction (depending on your machine)
 # OUTPUT:   final concatenated array to be used for classifier (convert to matrix first!)
-def extract(audiodirectory='../../../CS2108-Vine-Dataset/vine/validation/audio',type= 'valid',processes=6):
+def extract(audiodirectory='../../../CS2108-Vine-Dataset/vine/training/audio',type= 'train',processes=6):
     # 1. extract all feature files into directory
     # WARNING: TAKES AT LEAST 10 MINUTES
-    extractor.extractAll(audiodirectory,processes)
+    #extractor.extractAll(audiodirectory,processes)
     # 2. combine all feature files into feature dictionary
-    collateall(audiodirectory,type)
+    #collateall(audiodirectory,type)
     # 3. remove feature vector files
-    removeVectors(audiodirectory)
+    #removeVectors(audiodirectory)
     
     audiodirectory += '/'+type
     
     # 4. shorten features to match shortest file and concatenate to get final array
-    shortenAll(audiodirectory,type)
-    concatall(audiodirectory+'/short/',audiodirectory+'/short/'+type+'_emsz_'+'short.npy')
+    #shortenAll(audiodirectory,type)
+    #concatall(audiodirectory+'/short/',audiodirectory+'/short/'+type+'_emsz_'+'short.npy')
     
     # 5. lengthen features to match longest file and concatenate to get final array
-    lengthenAll(audiodirectory,type)
-    concatall(audiodirectory+'/long/',audiodirectory+'/long/'+type+'_emsz_'+'long.npy')
+    #lengthenAll(audiodirectory,type)
+    #concatall(audiodirectory+'/long/',audiodirectory+'/long/'+type+'_emsz_'+'long.npy')
+    
+    # 5. pad zeros to features to match longest file and concatenate to get final array
+    padAll(audiodirectory,type)
+    concatall(audiodirectory+'/zeropad/',audiodirectory+'/zeropad/'+type+'_emsz_'+'zeropad.npy')
     print 'audio features extracted successfully'
 
 #Concatenates all arrays in the folder
@@ -80,6 +84,15 @@ def lengthenAll(directory,type):
     fitLength(302,directory,type+'_'+'energy'+'.npy','long')
     fitLength(302,directory,type+'_'+'zero'+'.npy','long')
     print 'done'
+    
+def padAll(directory,type):
+    print 'padding files...'
+    padZeros(302,directory,type+'_'+'spect'+'.npy')
+    padZeros(302,directory,type+'_'+'mfcc'+'.npy')
+    padZeros(302,directory,type+'_'+'energy'+'.npy')
+    padZeros(302,directory,type+'_'+'zero'+'.npy')
+    print 'done'
+
 
 # 1.shortens all features to shortest length and concatenate into 1D and
 # outputs np.matrix (shape(3000,shortest length*k) where k is number of lines in feature vector
@@ -129,6 +142,47 @@ def fitLength(fit,directory,file,mode):
     np.save(directory+'/'+file[:-4]+mode+'.npy',result)
 
     
+def padZeros(fit,directory,file):
+    dict = np.load(directory+'/'+file).item()
+    dict = collections.OrderedDict(sorted(dict.items()))
+    mode = 'zeropad'
+    
+    isContiguous = dict.itervalues().next().flags['F_CONTIGUOUS']
+    if(isContiguous): #eg. energy, zero
+        result = []
+        #extract array
+        for line in dict: #for every feature vector in dictionary
+            a = list(dict[line])
+            while(len(a)<fit):
+                a = a + [0] #pad with zeros
+            result.append(a[:fit]) #trim to length fit and add to array result
+            del a
+    
+    else: #eg. mfcc, spectrum
+        #initialise result array
+        result = []
+        
+        #extract array
+        i = 0
+        for arr in dict:
+            x = []
+            for line in dict[arr]:
+                a = list(line)
+                while(len(a) < fit):
+                    a = a + [0]
+                x += (a[:fit]) #trim to fit
+                del a
+            #add concatenated array to result    
+            result.append(x)
+            del x
+            printProgress (i, len(dict), 'Padding with zeros to fit ' + str(fit), '', decimals = 1, barLength = 30)
+            i+=1
+    print
+    directory+='/'+mode
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    np.save(directory+'/'+file[:-4]+mode+'.npy',result)
+    
 # gather all feature vectors and save it into a dictionary. (eg. MFCC.npy, energy.npy)
 # usage: collate('mfcc', './audiodirectory')
 def collate(featuretype,type,directory = "./"):    
@@ -175,3 +229,7 @@ def printProgress (iteration, total, prefix = '', suffix = '', decimals = 1, bar
     if iteration == total:
         sys.stdout.write('\n')
     sys.stdout.flush()
+
+
+if __name__ == '__main__':
+    extract()
