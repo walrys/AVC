@@ -85,3 +85,4 @@ data/validation_individual/valid_zerozeropad.npy
 classifier/SVM.pyc
 data/emsz_zeropad_report.txt
 data/report/emsz_zeropad_report.txt
+data/results/emsz_zeropad_Y_predict.npy
