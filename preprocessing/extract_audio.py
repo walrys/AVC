@@ -29,7 +29,7 @@ def batchAudioExtract(input_store_path, database_path):
 		getAudioClip(path, sound_file)
 
 # arg[1] = storage path
-# arg[2] = database path
+# arg[2] = source path
 
 if __name__ == '__main__':
 	if (len(sys.argv) != 3):

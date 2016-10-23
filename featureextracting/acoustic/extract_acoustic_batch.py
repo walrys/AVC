@@ -11,7 +11,7 @@
 # More details: http://librosa.github.io/librosa/tutorial.html#more-examples.
 
 #from __future__ import print_function
-import moviepy.editor as mp
+#import moviepy.editor as mp
 import librosa
 import numpy as np
 import os

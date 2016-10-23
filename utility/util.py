@@ -1,9 +1,13 @@
 import os, sys
 import csv
+import numpy as np
 
 """ A utility module with a bunch of functions that 
 	manipulates database
 """ 
+def open_npy(input_path):
+	array = np.load(input_path)
+	print array
 
 # returns a dictionary of index-venue key pair 
 # eg. {1: 'City', 2: 'Theme Park' ...}
@@ -76,3 +80,5 @@ def get_jpg_dictionary_path(input_path):
 #print get_mp4_paths(database_path)
 #print get_jpg_dictionary_path("/Users/Brandon/Dropbox/NUS/Y3S1/CS2108/Lab/Assignment_2/CS2108-Vine-Dataset/mp4_frames")
 #print get_video_category("/Users/Brandon/Dropbox/NUS/Y3S1/CS2108/Lab/Assignment_2/CS2108-Vine-Dataset", "vine-venue-training.txt")
+
+#open_npy("temp_energy.npy")

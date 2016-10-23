@@ -12,14 +12,14 @@ import extract_acoustic_batch as extractor
 #           ii. type of data (training/validation)
 #           iii.number of processes to handle extraction (depending on your machine)
 # OUTPUT:   final concatenated array to be used for classifier (convert to matrix first!)
-def extract(audiodirectory='../../../CS2108-Vine-Dataset/vine/training/audio',type= 'train',processes=6):
+def extract(audiodirectory='../../../CS2108-Vine-Dataset/vine/training/audio', type= 'train',processes=6):
     # 1. extract all feature files into directory
     # WARNING: TAKES AT LEAST 10 MINUTES
-    #extractor.extractAll(audiodirectory,processes)
+    extractor.extractAll(audiodirectory,processes)
     # 2. combine all feature files into feature dictionary
-    #collateall(audiodirectory,type)
+    collateall(audiodirectory,type)
     # 3. remove feature vector files
-    #removeVectors(audiodirectory)
+    removeVectors(audiodirectory)
     
     audiodirectory += '/'+type
     
@@ -229,7 +229,3 @@ def printProgress (iteration, total, prefix = '', suffix = '', decimals = 1, bar
     if iteration == total:
         sys.stdout.write('\n')
     sys.stdout.flush()
-
-
-if __name__ == '__main__':
-    extract()

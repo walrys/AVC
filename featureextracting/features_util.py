@@ -34,32 +34,55 @@ def concatenate(file1,file2,output):
     arr1 = np.load(file1)
     arr2 = np.load(file2)
     result = []
+
+    print arr1
+    print arr2
+
     for i in range(len(arr1)):
         result.append(np.append(arr1[i],arr2[i],axis=0))
+   
+    np.save(output,result)
+    print "first array: " + str(len(arr1[0]))
+    print "second array: " + str(len(arr2[0]))
+    print "result array: " + str(len(result[0]))
+
     del arr1
     del arr2
-    np.save(output,result)
-    print len(result[0])
     del result
+
 
 def concatall(directory,output):
     files = []
     temp = output + '/temp.npy'
     for a_file in os.listdir(directory):
         files.append(directory+'/'+a_file)
+
+    #if (os.listdir(output)[0] == ".DS_Store"):
+        #os.remove(output + "/.DS_Store")   
     print
     print 'concatenating all files...'
     for i in xrange(len(files)-1):
         print 'merging '+str(i+1)+ ' of ' + str(len(files)-1)
         if files[i].endswith(".npy"):
-            if (len(os.listdir(output)) > 0 and os.listdir(output)[0] == ".DS_Store"):
-                os.remove(output + "/.DS_Store")
-            if len(os.listdir(output)) == 0:
-                concatenate(files[i],files[i+1], temp)
-            elif i+1==len(files)-1:
-                concatenate(temp,files[i+1], output)
-                print 'removing temp files...'
-                os.remove(temp)
+            if os.path.isfile(output + "/.DS_Store"):
+                if i == 1:
+                    concatenate(files[i],files[i+1], temp)
+                elif i+1==len(files)-1:
+                    concatenate(temp,files[i+1], output)
+                    print 'removing temp files...'
+                    os.remove(temp)
+                else:
+                    concatenate(temp,files[i+1],temp)
+
             else:
-                concatenate(temp,files[i+1],temp)
+                if i == 0:
+                    concatenate(files[i],files[i+1], temp)
+
+                elif i+1==len(files)-1:
+                    concatenate(temp,files[i+1], output)
+                    print 'removing temp files...'
+                    os.remove(temp)
+                else:
+                    concatenate(temp,files[i+1],temp)
+    
     print 'concatenation complete!'

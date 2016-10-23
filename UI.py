@@ -2,7 +2,9 @@
 import cv2
 import utility.util as util
 import preprocessing.extract_frame as ppf
-#import featureextracting.concantenate_features_new as fe
+import featureextracting.concat_input as fe
+import classifier.SVM as svm
+import numpy as np
 from Tkinter import *
 import tkFileDialog
 from PIL import Image, ImageTk, ImageDraw, ImageFont
@@ -16,6 +18,7 @@ class UI_class:
         self.search_path = search_path
         self.master = master
         self.temp_storing_path = temp_storing_path
+        self.model = svm.create_model(self.search_path)
         topframe = Frame(self.master, padx=240)
         topframe.pack()
 
@@ -92,16 +95,21 @@ class UI_class:
             print("Please extract the key frames for the selected video first!!!")
         else:
             # extract audio to temp folder
-            
-            # concatenate each feature
+            # assuming audio has been extracted
 
+            # concatenate each feature
+            fe.combine_features(temp_path + "/wav", temp_path + "/jpg", temp_path + "/npy")
+
+            # load temp.npy
+            X_test = np.load(temp_path + "/npy/temp.npy")
             # send for classification
-            class_value = 1
+            class_value = svm.predict(self.search_path, self.model, X_test)
 
             venue_list = util.get_venue_list(self.search_path)
 
             # with integer, get venue text
-            venue_text = venue_list[class_value]
+            print class_value[0]
+            venue_text = venue_list[class_value[0]]
 
             venue_img = Image.open("venue_background.jpg")
             draw = ImageDraw.Draw(venue_img)
@@ -116,6 +124,14 @@ class UI_class:
             myvar = Label(self.query_img_frame, image=tkimage)
             myvar.image= tkimage
             myvar.grid(row=self.lastR, column=self.lastC+1)
+
+            # clean up
+            output_items = os.listdir(temp_path + "/npy")
+            for items in output_items:
+                if "zeropad" in items:
+                    continue
+                else:
+                    os.remove(temp_path + "/npy/" + items)
 
         self.query_img_frame.mainloop()
 

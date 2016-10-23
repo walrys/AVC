@@ -8,6 +8,34 @@ from sklearn.metrics import classification_report
 feature_store_path = "../data"
 video_store_path = "../data"
 
+def create_model(search_path):
+    X_train_array= np.load(search_path + '/train_combined/multimodal_train_combined_features.npy')
+    train_order = util.get_array_order(search_path + "/training_order.txt")
+    train_gnd = util.get_labels_ordered(search_path + "/vine-venue-training.txt", train_order)
+
+
+    X_train = np.asmatrix(X_train_array)
+    Y_train = train_gnd
+
+    model = svm.SVC(kernel='linear', degree=3, gamma='auto', shrinking=True, verbose=False, max_iter=-1)
+    model.fit(X_train, Y_train)
+
+    print "model created!"
+    return model
+
+def predict(search_path, model, X_test_array):
+    X_test  = np.asmatrix(X_test_array)
+    validation_order = util.get_array_order(search_path + "/validation_order.txt")
+    valid_gnd = util.get_labels_ordered(search_path + "/vine-venue-validation.txt", validation_order)
+
+    Y_predicted = []
+    for i in xrange(len(valid_gnd)):
+        Y_predicted.append(0)
+
+    Y_predicted = model.predict(X_test)
+
+    return Y_predicted
+
 def find_f1_score(final_predicted, Y_gnd_truth):
     # load features, find f1 score
     score = 0.0
@@ -46,7 +74,6 @@ def find_common_categories(input_path):
                 # saved is the category number each video has been predicted to be in
                 videos_list_of_common_categories[j].append(i)
 
-    
     print videos_list_of_common_categories
 
     return videos_list_of_common_categories
@@ -140,24 +167,25 @@ def batch_SVM(X_train_array, Y_train_array, X_test_array, Y_gnd_truth_array, lab
 
     # should give labels in theory
     Y_predicted = model.predict(X_test)
-    decision_functions = model.decision_function(X_test)
+    #decision_functions = model.decision_function(X_test)
     print('SVM Train Done.')
     #for i in xrange(len(Y_predicted)):
         #Y_predicted[i] = int(round(Y_predicted[i]))
 
-    print Y_predicted
     # 5. Save the predicted results and ground truth.
     #sio.savemat(output_path, {'Y_predicted': Y_predicted, 'Y_gnd': Y_gnd})
     #print Y_predicted
 
-
     np.save(np_output_path + "_Y_predict.npy", Y_predicted)
-    np.save(np_output_path + "_decision_functions.npy", decision_functions)
+    #np.save(np_output_path + "_decision_functions.npy", decision_functions)
 
-    #report = classification_report(Y_gnd_truth, Y_predicted, target_names=label_names)
-    #print report
+    report = classification_report(Y_gnd_truth, Y_predicted, target_names=label_names)
     
-    return Y_predicted, decision_functions
+    with open(text_output_path + "_report.txt", 'a') as writer:
+        writer.write(report)
+    
+    #print report
+    #decision_functions
 
 # takes a single feature vector, X_test_array and finds the predicted class
 # returns an integer corrosponding to the predicted class
