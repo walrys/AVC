@@ -394,3 +394,6 @@ classifier/decision_functions/all/mfcczeropad12_decision_functions.npy
 classifier/decision_functions/all/mfcczeropad13_decision_functions.npy
 classifier/decision_functions/energy/energyzeropad23_decision_functions.npy
 data/results/mfcczeropad9_decision_functions.npy
+ms_model.pkl
+batchvalid_ms_zeropad.npy
+data/train_combined/multimodal_train_combined_features.npy

@@ -55,11 +55,12 @@ class UI_class:
         ppf.frameExtract(self.temp_storing_path + "/jpg", self.filename)
         temp_frames = os.listdir(self.temp_storing_path + "/jpg")
 
+        
         self.frames = []
         for frame in temp_frames:
             if frame.endswith(".jpg"):
                 self.frames.append(self.temp_storing_path + "/jpg/" + frame)
-
+        
         COLUMNS = len(self.frames)
         self.columns = COLUMNS
         image_count = 0
@@ -87,6 +88,25 @@ class UI_class:
             except Exception, e:
                 continue
 
+        # extract wav file to temp storage
+        if os.name == 'posix':
+            print "extracting audio files..."
+            video_path = 'queries/'+os.path.basename(self.filename)
+            audio_path = "temp/wav/"+os.path.basename(self.filename)[:-3]+'wav'
+            os.system('python ./preprocessing/extract_audio.py '+video_path+' '+audio_path)
+            print "extracting audio features..."
+            os.system('python ./featureextracting/acoustic/audioprocessor.py '+audio_path)
+        else:
+            import preprocessing.extract_audio as ppa
+            import featureextracting.acoustic.audioprocessor as ap
+            print "extracting audio files..."
+            #ppa.getAudioClip(self.filename,self.temp_storing_path + "/wav/" + self.filename[-23:-3] + 'wav')
+            ppa.getAudioClip(self.filename,self.temp_storing_path + "/wav/"+os.path.basename(self.filename)[:-3]+'wav')
+            # extract audio features into temp storage
+            print "extracting audio features..."
+            ap.extractQuery(self.temp_storing_path + "/wav/"+os.path.basename(self.filename)[:-3]+'wav')
+            
+        
         self.query_img_frame.mainloop()
 
 
@@ -98,10 +118,10 @@ class UI_class:
             # assuming audio has been extracted
 
             # concatenate each feature
-            fe.combine_features(temp_path + "/wav", temp_path + "/jpg", temp_path + "/npy")
+            #fe.combine_features(temp_path + "/wav", temp_path + "/jpg", temp_path + "/npy")
 
             # load temp.npy
-            X_test = np.load(temp_path + "/npy/temp.npy")
+            X_test = np.load(temp_path + "/npy/test_ms_zeropad.npy")
             # send for classification
             class_value = svm.predict(self.search_path, self.model, X_test)
 
@@ -114,8 +134,9 @@ class UI_class:
             venue_img = Image.open("venue_background.jpg")
             draw = ImageDraw.Draw(venue_img)
 
-            font = ImageFont.truetype("/Library/Fonts/Arial.ttf",size=66)
+            font = ImageFont.truetype("./Fonts/impact.ttf",size=66)
 
+           # draw.text((50,50), venue_text, (0, 0, 0))
             draw.text((50,50), venue_text, (0, 0, 0), font=font)
 
             resized = venue_img.resize((100, 100), Image.ANTIALIAS)

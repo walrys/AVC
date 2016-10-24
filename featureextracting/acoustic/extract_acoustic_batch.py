@@ -12,6 +12,7 @@
 
 #from __future__ import print_function
 #import moviepy.editor as mp
+from pathlib import Path
 import librosa
 import numpy as np
 import os
@@ -68,6 +69,16 @@ def getAcousticFeatures(audio_reading_path):
 
     return feature_mfcc, feature_spect, feature_zerocrossing, feature_energy
 
+def extract(audio_reading_path):
+    feature_mfcc, feature_spect, feature_zerocrossing, feature_energy = getAcousticFeatures(audio_reading_path=audio_reading_path)
+        
+    # store in ../npy from current wav directory
+    acoustic_storing_path = str(Path(audio_reading_path[:-4]).parents[1]).replace('\\','/')+'/npy/'+os.path.basename(audio_reading_path[:-4])
+    print acoustic_storing_path
+    np.save(acoustic_storing_path+"_mfcc", feature_mfcc)
+    np.save(acoustic_storing_path+"_spect", feature_spect)
+    np.save(acoustic_storing_path+"_zero", feature_zerocrossing)
+    np.save(acoustic_storing_path+"_energy", feature_energy)
     
 def extractAll(directory,numProcesses):
     files = []
@@ -104,7 +115,10 @@ def extractMultiple(paths,isProcess):
     for i in range(numFiles):
         audio_reading_path = paths[i]
         feature_mfcc, feature_spect, feature_zerocrossing, feature_energy = getAcousticFeatures(audio_reading_path=audio_reading_path)
-        acoustic_storing_path = audio_reading_path[:-4]
+        
+        # store in ../npy from current wav directory
+        acoustic_storing_path = str(Path(audio_reading_path[:-4]).parents[1]).replace('\\','/')+'/npy/'+os.path.basename(audio_reading_path[:-4])
+        #print acoustic_storing_path
         np.save(acoustic_storing_path+"_mfcc", feature_mfcc)
         np.save(acoustic_storing_path+"_spect", feature_spect)
         np.save(acoustic_storing_path+"_zero", feature_zerocrossing)

@@ -20,7 +20,7 @@ def get_venue_list(input_path):
 
 	for string in venues:
 		divide = string.split("\t")
-		divide[1] = divide[1][:-2]
+		divide[1] = divide[1][:-1]
 		venues_dict[int(divide[0])] = divide[1]
 
 	return venues_dict

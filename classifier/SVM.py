@@ -9,18 +9,26 @@ feature_store_path = "../data"
 video_store_path = "../data"
 
 def create_model(search_path):
-    X_train_array= np.load(search_path + '/train_combined/multimodal_train_combined_features.npy')
-    train_order = util.get_array_order(search_path + "/training_order.txt")
-    train_gnd = util.get_labels_ordered(search_path + "/vine-venue-training.txt", train_order)
+    # X_train_array= np.load(search_path + '/train_combined/multimodal_train_combined_features.npy')
+    # train_order = util.get_array_order(search_path + "/training_order.txt")
+    # train_gnd = util.get_labels_ordered(search_path + "/vine-venue-training.txt", train_order)
+    # 
+    # 
+    # X_train = np.asmatrix(X_train_array)
+    # Y_train = train_gnd
 
+    # print "creating model..."
+    # model = svm.SVC(kernel='linear', degree=3, gamma='auto', shrinking=True, verbose=False, max_iter=-1)
+    # model.fit(X_train, Y_train)
 
-    X_train = np.asmatrix(X_train_array)
-    Y_train = train_gnd
-
-    model = svm.SVC(kernel='linear', degree=3, gamma='auto', shrinking=True, verbose=False, max_iter=-1)
-    model.fit(X_train, Y_train)
-
-    print "model created!"
+    # print "model created!"
+    # print "saving model"
+    from sklearn.externals import joblib
+    print "loading model"
+    # joblib.dump(model,'ms_model.pkl', compress=9)
+    model = joblib.load('ms_model.pkl')
+    print "model loaded"
+    print type(model)
     return model
 
 def predict(search_path, model, X_test_array):
